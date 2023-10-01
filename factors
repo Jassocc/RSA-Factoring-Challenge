@@ -1,42 +1,29 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 
-check_factors()
-{
-	if [ $# -ne 3 ];
-	then
-		args=("$@")
-		counter=0
-		num2=1
-		for i in ${args[*]};
-		do
-			if [ $counter -gt 1 ];
-			then
-				num2=$(echo $i*$num2 | bc)
-			fi
-			count=$((count + 1))
-		done
-	else
-		num2=$3
-	fi
-	num1=$2
-	num=$(echo "$1" | tr ':' '=')
+import sys
 
-	res=$(echo "if($num2 > $num1) 1 else 0" | bc)
-		if ((res == 1)); then
-			numcp=$num1
-			num1=$num2
-			num2=$numcp
-		fi
-	echo "$num$num1*$num2"
-}
-if [ $# -ne 1 ]
-then
-	echo 'Usage: factors <file>'
-	exit 1
-else
-	while read j
-	do
-		res=$(factor "$j")
-		check_factors $res
-	done < "$1"
-fi
+def factorize(val):
+    i =2
+    if val < 2:
+        return
+    factors = []
+    while val % i:
+        i += 1
+    factors.append(i)
+    val //= i
+    factors.append(val)
+    return factors
+def factorize_file(file_path):
+    with open(file_path, 'r') as file:
+        for line in file:
+            num = int(line.strip())
+            factors = factorize(num)
+            if len(factors) >= 2:
+                p, q = factors[0], factors[1]
+                print(f"{num}={p}*{q}")
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: ./factors <file>")
+        sys.exit(1)
+    input_file = sys.argv[1]
+    factorize_file(input_file)
