@@ -1,7 +1,42 @@
 #!/usr/bin/env bash
-FILE=$1
-while read num
-do
-	factors=($(factor $num))
-	echo "$num=$(($num/${factors[1]}))*${factors[1]}"
-done < $FILE
+
+check_factors()
+{
+	if [ $# -ne 3 ];
+	then
+		args=("$@")
+		counter=0
+		num2=1
+		for i in ${args[*]};
+		do
+			if [ $counter -gt 1 ];
+			then
+				num2=$(echo $i*$num2 | bc)
+			fi
+			count=$((count + 1))
+		done
+	else
+		num2=$3
+	fi
+	num1=$2
+	num=$(echo "$1" | tr ':' '=')
+
+	res=$(echo "if($num2 > $num1) 1 else 0" | bc)
+		if ((res == 1)); then
+			numcp=$num1
+			num1=$num2
+			num2=$numcp
+		fi
+	echo "$num$num1*$num2"
+}
+if [ $# -ne 1 ]
+then
+	echo 'Usage: factors <file>'
+	exit 1
+else
+	while read j
+	do
+		res=$(factor "$j")
+		check_factors $res
+	done < "$1"
+fi
