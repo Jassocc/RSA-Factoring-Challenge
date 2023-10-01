@@ -20,7 +20,7 @@ def factorize_file(file_path):
             factors = factorize(num)
             if len(factors) >= 2:
                 p, q = factors[0], factors[1]
-                print(f"{num}={p}*{q}")
+                print(f"{num}={q}*{p}")
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: ./factors <file>")
